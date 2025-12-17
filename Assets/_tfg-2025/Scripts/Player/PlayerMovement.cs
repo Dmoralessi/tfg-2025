@@ -5,11 +5,17 @@ public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
     private Vector2 moveInput;
+    private CharacterController controller;
+
+    void Awake()
+    {
+        controller = GetComponent<CharacterController>();
+    }
 
     void Update()
     {
         Vector3 movement = new Vector3(moveInput.x,0,moveInput.y);
-        transform.Translate(movement * moveSpeed * Time.deltaTime, Space.World);
+        controller.Move(movement * moveSpeed * Time.deltaTime);
     }
 
     public void OnMove(InputAction.CallbackContext context)
