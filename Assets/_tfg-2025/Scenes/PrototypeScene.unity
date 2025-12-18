@@ -166,8 +166,9 @@ GameObject:
   - component: {fileID: 193602371}
   - component: {fileID: 193602370}
   - component: {fileID: 193602369}
-  - component: {fileID: 193602373}
   - component: {fileID: 193602374}
+  - component: {fileID: 193602376}
+  - component: {fileID: 193602375}
   m_Layer: 0
   m_Name: NPC_Basic
   m_TagString: Untagged
@@ -269,25 +270,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &193602373
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 193602368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02156588d549cd84eb5d3b3b6855db64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WaypointPatrol
-  waypoints:
-  - {fileID: 214898936}
-  - {fileID: 1317411926}
-  - {fileID: 1153104310}
-  - {fileID: 1858338540}
-  moveSpeed: 2
-  reachDistance: 0.2
 --- !u!143 &193602374
 CharacterController:
   m_ObjectHideFlags: 0
@@ -313,6 +295,40 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &193602375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 193602368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6432264f60e650d4e8053a4ffa413d56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BasicNPCController
+  currentState: 0
+  player: {fileID: 1162842996}
+  detectionRadius: 4
+--- !u!114 &193602376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 193602368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02156588d549cd84eb5d3b3b6855db64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaypointMovement
+  waypoints:
+  - {fileID: 214898936}
+  - {fileID: 1317411926}
+  - {fileID: 1153104310}
+  - {fileID: 1858338540}
+  moveSpeed: 2
+  reachDistance: 0.2
 --- !u!1 &214898935
 GameObject:
   m_ObjectHideFlags: 0
