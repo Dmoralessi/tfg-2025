@@ -11,19 +11,18 @@ public class BasicNPCController : MonoBehaviour
 
     public NPCState currentState = NPCState.Patrol;
 
-    public Transform player;
-    public float detectionRadius = 4f;
-    
     private WaypointMovement movement;
+    private ProximityPerception perception;
 
     void Awake()
     {
         movement = GetComponent<WaypointMovement>();
+        perception = GetComponent<ProximityPerception>();
     }
 
     void Update()
     {
-        if (movement == null || player == null)
+        if (movement == null || perception == null)
             return;
         
         switch (currentState)
@@ -54,7 +53,7 @@ public class BasicNPCController : MonoBehaviour
 
     void ChaseState()
     {
-        movement.MoveTowards(player.position);
+        movement.MoveTowards(perception.GetTargetPosition());
 
         if(!IsPlayerInRange())
         {
@@ -74,7 +73,6 @@ public class BasicNPCController : MonoBehaviour
 
     bool IsPlayerInRange()
     {
-        float distance = Vector3.Distance(transform.position, player.position);
-        return distance < detectionRadius;
+        return perception != null && perception.IsTargetDetected();
     }
 }

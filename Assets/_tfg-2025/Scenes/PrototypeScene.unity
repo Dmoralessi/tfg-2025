@@ -169,6 +169,7 @@ GameObject:
   - component: {fileID: 193602374}
   - component: {fileID: 193602376}
   - component: {fileID: 193602375}
+  - component: {fileID: 193602377}
   m_Layer: 0
   m_Name: NPC_Basic
   m_TagString: Untagged
@@ -308,8 +309,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicNPCController
   currentState: 0
-  player: {fileID: 1162842996}
-  detectionRadius: 4
 --- !u!114 &193602376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,6 +328,20 @@ MonoBehaviour:
   - {fileID: 1858338540}
   moveSpeed: 2
   reachDistance: 0.2
+--- !u!114 &193602377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 193602368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ef746cf49e06584c86c358fef9a4f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProximityPerception
+  target: {fileID: 1162842996}
+  detectionRadius: 4
 --- !u!1 &214898935
 GameObject:
   m_ObjectHideFlags: 0
