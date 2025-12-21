@@ -32,4 +32,15 @@ public class NavMeshMovement : MonoBehaviour
     {
         agent.ResetPath();
     }
+
+    public Vector3 GetDesiredDirection()
+    {
+        if (agent == null)
+            return transform.forward;
+
+        if (agent.desiredVelocity.sqrMagnitude < 0.01f)
+            return transform.forward;
+
+        return agent.desiredVelocity.normalized;
+    }
 }

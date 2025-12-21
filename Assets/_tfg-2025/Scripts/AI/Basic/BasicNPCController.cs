@@ -53,7 +53,9 @@ public class BasicNPCController : MonoBehaviour
 
     void ChaseState()
     {
-        movement.MoveTowards(perception.GetTargetPosition());
+        Vector3 targetPos = perception.GetTargetPosition();
+        movement.MoveTowards(targetPos);
+        FaceTarget(targetPos);
 
         if(!IsPlayerInRange())
         {
@@ -74,5 +76,16 @@ public class BasicNPCController : MonoBehaviour
     bool IsPlayerInRange()
     {
         return perception != null && perception.IsTargetDetected();
+    }
+
+    void FaceTarget(Vector3 targetPosition)
+    {
+        Vector3 direction = targetPosition - transform.position;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude < 0.001f)
+            return;
+
+        transform.rotation = Quaternion.LookRotation(direction);
     }
 }

@@ -6,6 +6,7 @@ public class WaypointMovement : MonoBehaviour
     public Transform[] waypoints;
     public float moveSpeed = 2f;
     public float reachDistance = 0.2f;
+    public float stopDistance = 1.5f;
 
     private int currentIndex = 0;
     private CharacterController controller;
@@ -38,6 +39,9 @@ public class WaypointMovement : MonoBehaviour
     {
         Vector3 toTarget = worldPosition - transform.position;
         toTarget.y = 0f;
+
+        if (toTarget.magnitude <= stopDistance)
+            return;
 
         MoveInDirection(toTarget);
     }
