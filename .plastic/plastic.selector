@@ -1,4 +1,0 @@
-repository "tfg-2025/tfg-2025@6872794977808@cloud"
-  path "/"
-    br "/main"
-    co "/main"
