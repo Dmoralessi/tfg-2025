@@ -5,8 +5,10 @@ public class WaypointMovement : MonoBehaviour
 {
     public Transform[] waypoints;
     public float moveSpeed = 2f;
-    public float reachDistance = 0.2f;
+    public float reachDistance = 0.25f;
     public float stopDistance = 1.5f;
+
+    int frozenIndex = -1;
 
     private int currentIndex = 0;
     private CharacterController controller;
@@ -46,17 +48,6 @@ public class WaypointMovement : MonoBehaviour
         MoveInDirection(toTarget);
     }
 
-    public bool IsNearWaypoint()
-    {
-        if (waypoints == null || waypoints.Length == 0)
-            return true;
-
-        Vector3 toTarget = waypoints[currentIndex].position - transform.position;
-        toTarget.y = 0f;
-
-        return toTarget.magnitude < reachDistance;
-    }
-
     public void MoveInDirection(Vector3 direction)
     {
         Vector3 dir = direction.normalized;
@@ -67,5 +58,45 @@ public class WaypointMovement : MonoBehaviour
         {
             transform.rotation = Quaternion.LookRotation(dir);
         }
+    }
+
+    public void FreezeCurrentWaypoint()
+    {
+        frozenIndex = currentIndex;
+    }
+
+    public void MoveTowardsFrozenWaypoint()
+    {
+        if (frozenIndex < 0 || waypoints == null || waypoints.Length == 0)
+            return;
+
+        Vector3 toTarget = waypoints[frozenIndex].position - transform.position;
+        toTarget.y = 0f;
+
+        MoveInDirection(toTarget);
+    }
+
+    public float GetDistanceToFrozenWaypoint()
+    {
+        if (frozenIndex < 0)
+            return 0f;
+
+        Vector3 a = transform.position;
+        Vector3 b = waypoints[frozenIndex].position;
+
+        a.y = 0f;
+        b.y = 0f;
+
+        return Vector3.Distance(a, b);
+    }
+
+    public void TeleportToFrozenWaypoint()
+    {
+        if (frozenIndex < 0)
+            return;
+
+        transform.position = waypoints[frozenIndex].position;
+        currentIndex = frozenIndex;
+        frozenIndex = -1;
     }
 }

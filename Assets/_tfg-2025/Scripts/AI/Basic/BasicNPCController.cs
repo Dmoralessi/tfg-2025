@@ -11,6 +11,11 @@ public class BasicNPCController : MonoBehaviour
 
     public NPCState currentState = NPCState.Patrol;
 
+    float stuckTimer = 0f;
+    float maxStuckTime = 3f;
+    float lastDistanceToWaypoint;
+    Vector3 lastPosition;
+
     private WaypointMovement movement;
     private ProximityPerception perception;
 
@@ -56,19 +61,52 @@ public class BasicNPCController : MonoBehaviour
         Vector3 targetPos = perception.GetTargetPosition();
         movement.MoveTowards(targetPos);
         FaceTarget(targetPos);
-
-        if(!IsPlayerInRange())
+        
+        if (!IsPlayerInRange())
         {
+            stuckTimer = 0f;
+
+            movement.FreezeCurrentWaypoint();
+            lastDistanceToWaypoint = movement.GetDistanceToFrozenWaypoint();
+            lastPosition = transform.position;
+
             currentState = NPCState.ReturnToPatrol;
         }
     }
 
     void ReturnState()
     {
-        movement.MoveAlongWaypoints();
+        movement.MoveTowardsFrozenWaypoint();
 
-        if(movement.IsNearWaypoint())
+        float currentDistance = movement.GetDistanceToFrozenWaypoint();
+
+        if (currentDistance <= movement.reachDistance)
         {
+            stuckTimer = 0f;
+            currentState = NPCState.Patrol;
+            return;
+        }
+
+        float movedDistance = Vector3.Distance(transform.position, lastPosition);
+
+        bool noProgress = currentDistance >= lastDistanceToWaypoint - 0.02f;
+        bool barelyMoving = movedDistance < 0.01f;
+
+        if (noProgress || barelyMoving)
+        {
+            stuckTimer += Time.deltaTime;
+        }
+        else
+        {
+            stuckTimer = 0f;
+            lastDistanceToWaypoint = currentDistance;
+            lastPosition = transform.position;
+        }
+
+        if (stuckTimer >= maxStuckTime)
+        {
+            movement.TeleportToFrozenWaypoint();
+            stuckTimer = 0f;
             currentState = NPCState.Patrol;
         }
     }
