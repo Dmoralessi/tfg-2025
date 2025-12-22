@@ -4,11 +4,19 @@ public class AdvancedNPCController : MonoBehaviour
 {
     public enum NPCState
     {
-        Idle,
-        Chase
+        Patrol,
+        Chase,
+        Investigate
     }
 
-    public NPCState currentState = NPCState.Idle;
+    public NPCState currentState = NPCState.Patrol;
+    public float memoryDuration = 2.5f;
+
+    Vector3 lastSeenPosition;
+    float lastSeenTime;
+    float investigateTimer = 0f;
+    int investigatePhase = 0;
+    float investigatePhaseDuration = 0.8f;
 
     private NavMeshMovement movement;
     private VisionPerception perception;
@@ -26,37 +34,100 @@ public class AdvancedNPCController : MonoBehaviour
 
         switch (currentState)
         {
-            case NPCState.Idle:
-                IdleState();
+            case NPCState.Patrol:
+                PatrolState();
                 break;
 
             case NPCState.Chase:
                 ChaseState();
                 break;
+
+            case NPCState.Investigate:
+                InvestigateState();
+                break;
         }
     }
 
-    void IdleState()
+    void PatrolState()
     {
-        movement.Stop();
-
-        transform.Rotate(Vector3.up, 60f * Time.deltaTime);
+        movement.SetStoppingDistance(0.05f);
+        movement.Patrol();
 
         if (perception.CanSeeTargetWithForward(GetPerceptionForward()))
         {
+            movement.Stop();
             currentState = NPCState.Chase;
         }
     }
 
     void ChaseState()
     {
+        movement.SetStoppingDistance(1.5f);
         Vector3 targetPos = perception.GetTargetPosition();
-        movement.MoveTo(targetPos);
+        float distance = Vector3.Distance(transform.position, targetPos);
+
+        if (distance > movement.GetStoppingDistance())
+            movement.MoveTo(targetPos);
+        else
+            movement.Stop();
+
         FaceTarget(targetPos);
+
+        lastSeenPosition = targetPos;
+        lastSeenTime = Time.time;
 
         if (!perception.CanSeeTargetWhileChasing(GetPerceptionForward()))
         {
-            currentState = NPCState.Idle;
+            investigateTimer = 0f;
+            investigatePhase = 0;
+            currentState = NPCState.Investigate;
+        }
+    }
+
+    void InvestigateState()
+    {
+        if (investigatePhase == 0)
+        {
+            movement.MoveTo(lastSeenPosition);
+            FaceTarget(lastSeenPosition);
+
+            if (movement.HasReachedDestination())
+            {
+                movement.Stop();
+                investigatePhase = 1;
+                investigateTimer = 0f;
+            }
+            return;
+        }
+
+        investigateTimer += Time.deltaTime;
+
+        if (investigatePhase == 1)
+        {
+            RotateInPlace(-1f); // look left
+        }
+        else if (investigatePhase == 2)
+        {
+            RotateInPlace(1f); // look right
+        }
+
+        if (investigateTimer >= investigatePhaseDuration)
+        {
+            investigateTimer = 0f;
+            investigatePhase++;
+        }
+
+        if (perception.CanSeeTargetWithForward(GetPerceptionForward()))
+        {
+            currentState = NPCState.Chase;
+            return;
+        }
+
+        if (investigatePhase > 2)
+        {
+            movement.Stop();
+            movement.ResumePatrol();
+            currentState = NPCState.Patrol;
         }
     }
 
@@ -90,5 +161,10 @@ public class AdvancedNPCController : MonoBehaviour
             targetRotation,
             360f * Time.deltaTime
         );
+    }
+
+    void RotateInPlace(float direction)
+    {
+        transform.Rotate(Vector3.up, direction * 120f * Time.deltaTime);
     }
 }
