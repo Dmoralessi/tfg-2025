@@ -12,8 +12,10 @@
 /[Uu]ser[Ss]ettings/
 *.log
 
-# Plastic SCM workspace metadata
+# Version control / tooling metadata
 .plastic/
+.vscode/
+ignore.conf
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -31,9 +33,6 @@
 # Visual Studio cache directory
 .vs/
 
-# Visual Studio Code workspace settings
-.vscode/
-
 # Gradle cache directory
 .gradle/
 
@@ -43,6 +42,7 @@ ExportedObj/
 *.csproj
 *.unityproj
 *.sln
+*.slnx
 *.suo
 *.tmp
 *.user
