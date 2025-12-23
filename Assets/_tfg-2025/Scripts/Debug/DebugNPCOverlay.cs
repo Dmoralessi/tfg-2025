@@ -7,11 +7,18 @@ public class DebugNPCOverlay : MonoBehaviour
 
     BasicNPCController basicNPC;
     AdvancedNPCController advancedNPC;
+    WaypointMovement waypointMovement;
+    NavMeshMovement navMeshMovement;
+    LineRenderer navLine;
 
     void Awake()
     {
         basicNPC = GetComponent<BasicNPCController>();
         advancedNPC = GetComponent<AdvancedNPCController>();
+        waypointMovement = GetComponent<WaypointMovement>();
+        navMeshMovement = GetComponent<NavMeshMovement>();
+
+        CreateNavigationLine();
     }
 
     void OnGUI()
@@ -27,6 +34,15 @@ public class DebugNPCOverlay : MonoBehaviour
         if (settings.showState)
         {
             DrawStateLabel();
+        }
+
+        if (settings.showNavigation)
+        {
+            UpdateNavigationLine();
+        }
+        else
+        {
+            navLine.enabled = false;
         }
     }
 
@@ -77,5 +93,58 @@ public class DebugNPCOverlay : MonoBehaviour
         }
 
         return "";
+    }
+
+    void CreateNavigationLine()
+    {
+        GameObject lineObj = new GameObject("NavigationLine");
+        lineObj.transform.SetParent(transform);
+
+        navLine = lineObj.AddComponent<LineRenderer>();
+
+        navLine.positionCount = 2;
+        navLine.startWidth = 0.05f;
+        navLine.endWidth = 0.05f;
+
+        navLine.material = new Material(Shader.Find("Sprites/Default"));
+        navLine.startColor = Color.cyan;
+        navLine.endColor = Color.cyan;
+
+        navLine.useWorldSpace = true;
+        navLine.enabled = false;
+    }
+
+    void UpdateNavigationLine()
+    {
+        if (navLine == null)
+            return;
+
+        Vector3 target;
+
+        if (waypointMovement != null)
+        {
+            target = waypointMovement.GetCurrentNavigationTarget();
+        }
+        else if (navMeshMovement != null)
+        {
+            target = navMeshMovement.GetCurrentNavigationTarget();
+        }
+        else
+        {
+            navLine.enabled = false;
+            return;
+        }
+
+        const float GROUND_OFFSET = 0.02f;
+
+        Vector3 start = transform.position;
+        Vector3 end = target;
+
+        start.y = GROUND_OFFSET;
+        end.y = GROUND_OFFSET;
+
+        navLine.enabled = true;
+        navLine.SetPosition(0, start);
+        navLine.SetPosition(1, end);
     }
 }

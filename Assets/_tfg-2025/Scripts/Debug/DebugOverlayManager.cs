@@ -10,12 +10,14 @@ public class DebugOverlayManager : MonoBehaviour
     {
         public bool showOverlay;
         public bool showState;
+        public bool showNavigation;
     }
 
     public DebugSettings debugSettings = new DebugSettings
     {
         showOverlay = true,
-        showState = true
+        showState = true,
+        showNavigation = true
     };
 
     void Awake()
@@ -44,6 +46,11 @@ public class DebugOverlayManager : MonoBehaviour
         if (Keyboard.current.f2Key.wasPressedThisFrame)
         {
             debugSettings.showState = !debugSettings.showState;
+        }
+
+        if (Keyboard.current.f3Key.wasPressedThisFrame)
+        {
+            debugSettings.showNavigation = !debugSettings.showNavigation;
         }
     }
 }

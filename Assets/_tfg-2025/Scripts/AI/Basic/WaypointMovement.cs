@@ -99,4 +99,12 @@ public class WaypointMovement : MonoBehaviour
         currentIndex = frozenIndex;
         frozenIndex = -1;
     }
+
+    public Vector3 GetCurrentNavigationTarget()
+    {
+        if (waypoints == null || waypoints.Length == 0)
+            return transform.position;
+
+        return waypoints[currentIndex].position;
+    }
 }

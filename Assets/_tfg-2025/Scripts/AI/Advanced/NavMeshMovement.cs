@@ -54,7 +54,6 @@ public class NavMeshMovement : MonoBehaviour
     {
         agent.isStopped = false;
         agent.ResetPath();
-        //agent.SetDestination(firstDestination);
     }
 
     public Vector3 GetDesiredDirection()
@@ -73,5 +72,12 @@ public class NavMeshMovement : MonoBehaviour
     public void SetStoppingDistance(float distance)
     {
         agent.stoppingDistance = distance;
+    }
+    public Vector3 GetCurrentNavigationTarget()
+    {
+        if (agent == null || !agent.hasPath)
+            return transform.position;
+
+        return agent.destination;
     }
 }
