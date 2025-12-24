@@ -10,13 +10,13 @@ public class AdvancedNPCController : MonoBehaviour
     }
 
     public NPCState currentState = NPCState.Patrol;
-    public float memoryDuration = 2.5f;
 
     Vector3 lastSeenPosition;
-    float lastSeenTime;
     float investigateTimer = 0f;
     int investigatePhase = 0;
     float investigatePhaseDuration = 0.8f;
+    float reacquireGraceTime = 0.5f;
+    float lastReacquireTime = -Mathf.Infinity;
 
     private NavMeshMovement movement;
     private VisionPerception perception;
@@ -72,11 +72,14 @@ public class AdvancedNPCController : MonoBehaviour
             movement.Stop();
 
         FaceTarget(targetPos);
-
         lastSeenPosition = targetPos;
-        lastSeenTime = Time.time;
 
-        if (!perception.CanSeeTargetWhileChasing(GetPerceptionForward()))
+        bool recentlyReacquired = Time.time - lastReacquireTime < reacquireGraceTime;
+        bool facingTarget = IsFacingTarget(targetPos);
+
+        if (!perception.CanSeeTargetWhileChasing(GetPerceptionForward())
+                && !recentlyReacquired
+                && facingTarget)
         {
             investigateTimer = 0f;
             investigatePhase = 0;
@@ -91,6 +94,13 @@ public class AdvancedNPCController : MonoBehaviour
             movement.MoveTo(lastSeenPosition);
             FaceTarget(lastSeenPosition);
 
+            if (perception.CanSeeTargetWithForward(GetPerceptionForward()))
+            {
+                lastReacquireTime = Time.time;
+                currentState = NPCState.Chase;
+                return;
+            }
+
             if (movement.HasReachedDestination())
             {
                 movement.Stop();
@@ -104,11 +114,15 @@ public class AdvancedNPCController : MonoBehaviour
 
         if (investigatePhase == 1)
         {
-            RotateInPlace(-1f); // look left
+            RotateInPlace(-1f);
         }
         else if (investigatePhase == 2)
         {
-            RotateInPlace(1f); // look right
+            RotateInPlace(1f);
+        }
+        else if (investigatePhase == 3)
+        {
+            RotateInPlace(1f);
         }
 
         if (investigateTimer >= investigatePhaseDuration)
@@ -119,11 +133,12 @@ public class AdvancedNPCController : MonoBehaviour
 
         if (perception.CanSeeTargetWithForward(GetPerceptionForward()))
         {
+            lastReacquireTime = Time.time;
             currentState = NPCState.Chase;
             return;
         }
 
-        if (investigatePhase > 2)
+        if (investigatePhase > 3)
         {
             movement.Stop();
             movement.ResumePatrol();
@@ -166,5 +181,16 @@ public class AdvancedNPCController : MonoBehaviour
     void RotateInPlace(float direction)
     {
         transform.Rotate(Vector3.up, direction * 120f * Time.deltaTime);
+    }
+
+    bool IsFacingTarget(Vector3 targetPos, float threshold = 25f)
+    {
+        Vector3 toTarget = targetPos - transform.position;
+        toTarget.y = 0f;
+
+        if (toTarget.sqrMagnitude < 0.001f)
+            return true;
+
+        return Vector3.Angle(transform.forward, toTarget) <= threshold;
     }
 }

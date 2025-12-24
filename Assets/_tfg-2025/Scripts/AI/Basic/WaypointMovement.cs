@@ -95,7 +95,12 @@ public class WaypointMovement : MonoBehaviour
         if (frozenIndex < 0)
             return;
 
+        controller.enabled = false;
+
         transform.position = waypoints[frozenIndex].position;
+
+        controller.enabled = true;
+
         currentIndex = frozenIndex;
         frozenIndex = -1;
     }
