@@ -108,12 +108,18 @@ public class DebugNPCOverlay : MonoBehaviour
     {
         if (basicNPC != null)
         {
-            return $"BASIC NPC\n{basicNPC.currentState}";
+            return
+                $"BASIC NPC\n" +
+                $"{basicNPC.currentState}\n" +
+                $"AI: {basicNPC.AvgDecisionMs:F3} ms";
         }
 
         if (advancedNPC != null)
         {
-            return $"ADVANCED NPC\n{advancedNPC.currentState}";
+            return
+                $"ADVANCED NPC\n" +
+                $"{advancedNPC.currentState}\n" +
+                $"AI: {advancedNPC.AvgDecisionMs:F3} ms";
         }
 
         return "";

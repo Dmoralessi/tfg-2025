@@ -16,6 +16,9 @@ public class BasicNPCController : MonoBehaviour
     float lastDistanceToWaypoint;
     Vector3 lastPosition;
 
+    SimpleProfiler profiler = new SimpleProfiler();
+    public float AvgDecisionMs => profiler.averageMs;
+
     private WaypointMovement movement;
     private ProximityPerception perception;
 
@@ -27,6 +30,8 @@ public class BasicNPCController : MonoBehaviour
 
     void Update()
     {
+        profiler.Begin();
+
         if (movement == null || perception == null)
             return;
         
@@ -44,6 +49,8 @@ public class BasicNPCController : MonoBehaviour
                 ReturnState();
                 break;
         }
+
+        profiler.End();
     }
 
     void PatrolState()

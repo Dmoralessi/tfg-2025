@@ -18,6 +18,9 @@ public class AdvancedNPCController : MonoBehaviour
     float reacquireGraceTime = 0.5f;
     float lastReacquireTime = -Mathf.Infinity;
 
+    SimpleProfiler profiler = new SimpleProfiler();
+    public float AvgDecisionMs => profiler.averageMs;
+
     private NavMeshMovement movement;
     private VisionPerception perception;
 
@@ -29,6 +32,8 @@ public class AdvancedNPCController : MonoBehaviour
 
     void Update()
     {
+        profiler.Begin();
+
         if (movement == null || perception == null)
             return;
 
@@ -46,6 +51,8 @@ public class AdvancedNPCController : MonoBehaviour
                 InvestigateState();
                 break;
         }
+
+        profiler.End();
     }
 
     void PatrolState()
