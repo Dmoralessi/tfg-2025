@@ -11,19 +11,19 @@ public class DebugOverlayManager : MonoBehaviour
         public bool showOverlay;
         public bool showState;
         public bool showNavigation;
+        public bool showPerception;
     }
 
     public DebugSettings debugSettings = new DebugSettings
     {
         showOverlay = true,
         showState = true,
-        showNavigation = true
+        showNavigation = true,
+        showPerception = true
     };
 
     void Awake()
     {
-        Debug.Log("DebugOverlayManager Awake");
-
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -51,6 +51,11 @@ public class DebugOverlayManager : MonoBehaviour
         if (Keyboard.current.f3Key.wasPressedThisFrame)
         {
             debugSettings.showNavigation = !debugSettings.showNavigation;
+        }
+
+        if (Keyboard.current.f4Key.wasPressedThisFrame)
+        {
+            debugSettings.showPerception = !debugSettings.showPerception;
         }
     }
 }
